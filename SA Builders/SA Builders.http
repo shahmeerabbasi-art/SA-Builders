@@ -1,0 +1,6 @@
+@SA_Builders_HostAddress = http://localhost:5297
+
+GET {{SA_Builders_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
