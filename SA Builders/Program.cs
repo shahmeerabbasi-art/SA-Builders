@@ -57,18 +57,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        var allowedOrigins = builder.Configuration
-            .GetSection("Frontend:AllowedOrigins")
-            .Get<string[]>() ?? new[]
-            {
-                "http://localhost:5173",
-                "https://sabuilders-zeta.vercel.app"
-            };
-
-        policy.WithOrigins(allowedOrigins)
+        policy.SetIsOriginAllowed(origin => true) // Dynamically allows any requesting origin
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowCredentials(); // Works smoothly with dynamic origin evaluation
     });
 });
 
