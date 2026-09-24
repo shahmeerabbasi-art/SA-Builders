@@ -52,18 +52,23 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient<ISupabaseStorageService, SupabaseStorageService>();
 
-// 4. CORS Setup
+// 4. CORS Setup - Updated with Vercel Production Fallbacks & Credentials
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         var allowedOrigins = builder.Configuration
             .GetSection("Frontend:AllowedOrigins")
-            .Get<string[]>() ?? new[] { "http://localhost:5173" };
+            .Get<string[]>() ?? new[]
+            {
+                "http://localhost:5173",
+                "https://sabuilders-zeta.vercel.app"
+            };
 
         policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -77,6 +82,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Make sure UseCors comes after UseRouting/UseStaticFiles and before UseAuthorization
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
